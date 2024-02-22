@@ -5,6 +5,7 @@ import { Users } from './components/Users';
 import { Navbar } from './components/Navbar';
 import { Login } from './components/Login';
 import { Registro } from './components/Registro';
+import { Tasks } from './components/Tasks';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<Users />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/task" element={<Tasks />} />
       </Routes>
     </div>
   </Router>

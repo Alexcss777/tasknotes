@@ -1,7 +1,10 @@
 import React, {useState} from 'react'
+import { useNavigate } from 'react-router-dom';
+
 
 const API= process.env.REACT_APP_API;
 export const Login = () =>{
+  const navigate = useNavigate();
 
 
     const [email, setEmail] = useState('')
@@ -23,8 +26,10 @@ export const Login = () =>{
         })
         
         const data = await res.json();
-        if(data.status){
-          console.log(data.status);
+        if(data){
+          console.log(data);
+          localStorage.setItem('userid', data.user_id);
+          navigate('/task');
 
         }
       

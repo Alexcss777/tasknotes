@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState,useRef} from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal,Card } from 'react-bootstrap';
 const API= process.env.REACT_APP_API;
 
 export const Tasks = () =>{
@@ -12,9 +12,12 @@ export const Tasks = () =>{
     const [id, setId] = useState('')
     const [editing, setEditing] = useState(false)
     const [show, setShow] = useState(false);
+    const [taskColors, setTaskColors] = useState({});
     
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const storedUser = localStorage.getItem('name');
 
    //Crear actividades
     const handleSubmit = async (e) =>{
@@ -61,15 +64,47 @@ export const Tasks = () =>{
     setShow(false);
      
     }
+   
+    //calcular las fechas
+    const calculateDateDifference = (taskDate) => {
+      const currentDate = new Date();
+      console.log(currentDate)
+      const taskDateObj = new Date(taskDate);
+      
+    
+      // Usar Math.abs para obtener el valor absoluto de la diferencia en días
+     const diff =  taskDateObj- currentDate;
+     const differenceInDays = Math.round(diff / (1000 * 60 * 60 * 24));
+     console.log(differenceInDays)
+      return differenceInDays;
+    };
   
   //Obtener las actividades
     const getTask = async (idUser) =>{
       console.log('Fetching task for ID:', idUser)
       const res = await fetch(`${API}/tasks/${idUser}`)
       const data = await res.json()
-      setTask(data)
       console.log(data)
-     
+      //console.log('hola',data[0].date);
+      
+        // Calcular el color para cada tarea y actualizar el estado
+  const updatedTaskColors = {};
+  data.forEach((task) => {
+    const differenceInDays = calculateDateDifference(task.date);
+
+    // Ajustar logica
+    if (differenceInDays >3 ) {
+      updatedTaskColors[task._id] = 'success';
+
+    } else if (differenceInDays <=1) {
+      updatedTaskColors[task._id] = 'danger';
+    } else {
+      updatedTaskColors[task._id] = 'mb-3 bg-warning';
+    }
+  });
+  
+  setTaskColors(updatedTaskColors);
+  setTask(data)
      
   
     }
@@ -102,19 +137,21 @@ export const Tasks = () =>{
       
        
 
-        console.log(data)
+       
       }
+      
 
   
     useEffect(() => {
    
       const storedUserID = localStorage.getItem('userid');
+      console.log('hola',storedUserID)
       setIdUser(storedUserID);
-  
-      // Llama a getTask solo si storedUserID tiene un valor
+     
       if (storedUserID) {
         getTask(storedUserID);
       }
+    
         
   
     }, []); // El segundo parámetro [] asegura que el efecto solo se ejecute una vez al montar el componente
@@ -122,11 +159,11 @@ export const Tasks = () =>{
   
       return (
       <div>
-          <h2>Bienvenido, {idUser}!</h2>
+          <h2>Bienvenido, {storedUser}!</h2>
         <h1>About</h1>
         <div className='col-md-4'>
         <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button variant="info" style={{marginBottom:'10px'}} onClick={handleShow}>
        Agregar tarea
       </Button>
 
@@ -178,39 +215,27 @@ export const Tasks = () =>{
     </>
           </div>
           
-          <div className='col-md-6'>
-            <table className='table table-striped'>
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>user</th>
-                  <th>date</th>
-                  <th>description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tasks.map(task => (
-                  <tr key={task._id}>
-                    <td>${task.name}</td>
-                    <td>${task.idUser}</td>
-                    <td>${task.date}</td>
-                    <td>${task.description}</td>
-                    <td>
-                    <button className='btn btn-secondary btn-sm btn-block'
-                  onClick={(e) => editTask(task._id)}>
-                     Editar
-                    </button>
-                    <button className='btn btn-danger btn-sm btn-block'
-                   onClick={(e) => deleteTask(task._id)}>
-                     Eliminar
-                    </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+  <div className='d-flex flex-wrap '>
+  {tasks.map(task => (
+    <Card key={task._id} style={{ width: '24rem', color:'white', marginRight: '10px' }} className={`mb-3 bg-${taskColors[task._id]}`}>
+      <Card.Header style={{ fontSize: '1.5rem' }}>{task.name}</Card.Header>
+      <Card.Body>
+        <Card.Text style={{ fontSize: '1.2rem' }}>{task.description}</Card.Text>
+        <p style={{ fontSize: '1.1rem' }}>Fecha Limite</p>
+        <Card.Text  style={{ fontSize: '1.1rem' }}>{task.date}</Card.Text>
+      </Card.Body>
+      <Card.Footer>
+        <Button  style={{marginRight:'5px'}} variant='secondary' className='btn-sm mt-2' onClick={() => editTask(task._id)}>
+          Editar
+        </Button>
+        <Button variant='danger' className='btn-sm mt-2' onClick={() => deleteTask(task._id)}>
+          Eliminar
+        </Button>
+      </Card.Footer>
+    </Card>
+  ))}
+</div>
 
-          </div>
       </div>
       
     );

@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const API= process.env.REACT_APP_API;
 export const Users = () =>{
+  const navigate = useNavigate();
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -58,9 +60,25 @@ export const Users = () =>{
   }
 
   const getUsers = async () =>{
-    const res = await fetch(`${API}/users`)
-    const data = await res.json()
-    setUsers(data)
+    const token = localStorage.getItem('token');  // Obtén el token almacenado en localStorage o de donde lo tengas
+      console.log(token)
+      if (!token) {
+        console.log('Token no presente');
+        // Puedes manejar esta situación de diversas maneras, por ejemplo, redirigiendo a la página de inicio de sesión.
+        navigate('/login');
+      }
+    const res = await fetch(`${API}/users`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,  // Incluye el token en la cabecera
+      },
+    });
+
+    const data = await res.json();
+    console.log(data);
+    setUsers(data);
+    
   
 
   }

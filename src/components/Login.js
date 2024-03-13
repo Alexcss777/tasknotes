@@ -29,6 +29,8 @@ export const Login = () =>{
         if(data){
           console.log(data);
           localStorage.setItem('userid', data.user_id);
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('name', data.name);
           navigate('/task');
 
         }

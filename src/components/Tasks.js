@@ -1,7 +1,8 @@
 
 import React, { useEffect, useState,useRef} from 'react';
 import { Button, Form, Modal,Card } from 'react-bootstrap';
-const API= process.env.REACT_APP_API;
+import { useNavigate } from 'react-router-dom';
+const API= 'https://tasknotes.onrender.com';
 
 export const Tasks = () =>{
     const [idUser, setIdUser] = useState('');
@@ -16,8 +17,10 @@ export const Tasks = () =>{
     
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const navigate = useNavigate();
 
     const storedUser = localStorage.getItem('name');
+       const token = localStorage.getItem('token'); 
 
    //Crear actividades
     const handleSubmit = async (e) =>{
@@ -27,7 +30,8 @@ export const Tasks = () =>{
       const res = await fetch(`${API}/task`,{
         method: 'POST',
         headers: {
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body:JSON.stringify({
           name,
@@ -41,7 +45,8 @@ export const Tasks = () =>{
       const res = await fetch(`${API}/tasks/${id}`,{
         method:'PUT',
         headers:{
-          'Content-type': 'application/json'
+          'Content-type': 'application/json',
+          'Authorization': `Bearer ${token}`,
 
         },
         body:JSON.stringify({
@@ -115,7 +120,11 @@ export const Tasks = () =>{
       const userResponse = window.confirm('Quieres borrar este elemento?')
       if(userResponse){
         const res = await fetch(`${API}/tasks/${id}`,{
-          method:'DELETE'
+          method:'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,  // Incluye el token en la cabecera
+          },
         });
         const data = await res.json();
         console.log(data)
@@ -126,7 +135,14 @@ export const Tasks = () =>{
   //editar actividad crear un metodo especiak para editar
       const editTask = async (id) => {
         console.log('id',id)
-        const res = await fetch(`${API}/task/${id}`)
+        const res = await fetch(`${API}/task/${id}`,{
+          method:'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,  // Incluye el token en la cabecera
+          },
+
+        })
         const data = await res.json()
         setEditing(true)
         setId(data._id)
@@ -143,6 +159,13 @@ export const Tasks = () =>{
 
   
     useEffect(() => {
+      const token = localStorage.getItem('token'); 
+      console.log(token)
+      if (!token) {
+        console.log('Token no presente');
+        // Puedes manejar esta situación de diversas maneras, por ejemplo, redirigiendo a la página de inicio de sesión.
+        navigate('/login');
+      }
    
       const storedUserID = localStorage.getItem('userid');
       console.log('hola',storedUserID)

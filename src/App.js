@@ -1,11 +1,11 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { About } from './components/About'
-import { Users } from './components/Users';
 import { Navbar } from './components/Navbar';
 import { Login } from './components/Login';
 import { Registro } from './components/Registro';
 import { Tasks } from './components/Tasks';
+import PrivateRoutes from './utils/privateRoutes'
 
 
 function App() {
@@ -15,11 +15,12 @@ function App() {
       <Navbar/>
     <div className='container p-4'>
       <Routes>
-        <Route path="/about" element={<About />} />
-        <Route path="/" element={<Users />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/task" element={<Tasks />} />
+        <Route element={<PrivateRoutes />}>
+                <Route path="/task" element={<Tasks />} />
+       </Route>
       </Routes>
     </div>
   </Router>

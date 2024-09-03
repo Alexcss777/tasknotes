@@ -182,8 +182,7 @@ export const Tasks = () =>{
   
       return (
       <div>
-          <h2>Bienvenido, {storedUser}!</h2>
-        <h1>About</h1>
+          <h2>Bienvenido {storedUser}!</h2>
         <div className='col-md-4'>
         <>
       <Button variant="info" style={{marginBottom:'10px'}} onClick={handleShow}>

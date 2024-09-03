@@ -6,6 +6,7 @@ import { Login } from './components/Login';
 import { Registro } from './components/Registro';
 import { Tasks } from './components/Tasks';
 import PrivateRoutes from './utils/privateRoutes'
+import HomePage from './components/home';
 
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <Navbar/>
     <div className='container p-4'>
       <Routes>
+      <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
         <Route path="/registro" element={<Registro />} />

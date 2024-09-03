@@ -2,7 +2,7 @@
 import React, { useEffect, useState,useRef} from 'react';
 import { Button, Form, Modal,Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-const API= 'https://tasknotes.onrender.com';
+const API= 'https://tasknotes-api.onrender.com';
 
 export const Tasks = () =>{
     const [idUser, setIdUser] = useState('');

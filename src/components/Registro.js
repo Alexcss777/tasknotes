@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { validateForm } from '../utils/Validations';
 
-const API= 'https://tasknotes.onrender.com';
+const API= 'https://tasknotes-api.onrender.com';
 
 export const Registro = () =>{
 
